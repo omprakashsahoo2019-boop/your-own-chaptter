@@ -106,26 +106,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const form = document.getElementById("storyForm");
 
-if (form) {
-  form.addEventListener("submit", async (event) => {
+if (form) {form.addEventListener("submit", async (event) => {
     event.preventDefault();
+
+    const submitButton = form.querySelector('button[type="submit"]');
+
+    if (submitButton.disabled) return;
 
     const data = {
       name: document.getElementById("name")?.value.trim() || "",
       whatsapp: document.getElementById("whatsapp")?.value.trim() || "",
       email: document.getElementById("email")?.value.trim() || "",
-
-      storyType: document.getElementById("storyType")?.value || "",
-      forWho: document.getElementById("forWho")?.value || "",
-      occasion: document.getElementById("occasion")?.value || "",
-      feeling: document.getElementById("feeling")?.value || "",
-      language: document.getElementById("language")?.value || "",
-      length: document.getElementById("length")?.value || "",
-
-      customStory: document.getElementById("customStory")?.value.trim() || "",
-      story: document.getElementById("story")?.value.trim() || "",
-      special: document.getElementById("special")?.value.trim() || ""
+      story: document.getElementById("story")?.value.trim() || ""
     };
+
+    if (!data.name || !data.whatsapp || !data.email || !data.story) {
+      alert("Please fill in all the details.");
+      return;
+    }
+
+    submitButton.disabled = true;
+    submitButton.textContent = "Sending...";
 
     try {
       await fetch(SCRIPT_URL, {
@@ -139,87 +140,24 @@ if (form) {
 
       alert(
         `Thank you, ${data.name}! ❤️\n\n` +
-        `We've received the details of your story.\n\n` +
+        `We've received your story details.\n\n` +
         `We'll contact you on WhatsApp regarding your storybook.`
       );
 
       form.reset();
-
-      if (customStoryBox) {
-        customStoryBox.classList.add("hidden");
-      }
-
-      if (customStory) {
-        customStory.required = false;
-      }
 
     } catch (error) {
-      alert(
-        "Something went wrong while sending your enquiry.\n\n" +
-        "Please try again."
-      );
-
       console.error(error);
+      alert("Something went wrong. Please try again.");
+    } finally {
+      submitButton.disabled = false;
+      submitButton.textContent = "Create My Chapter →";
     }
   });
+  
 }
 
-    form.addEventListener("submit", (event) => {
 
-      event.preventDefault();
-
-      const name =
-        document.getElementById("name")?.value.trim();
-
-      const whatsapp =
-        document.getElementById("whatsapp")?.value.trim();
-
-      const story =
-        document.getElementById("story")?.value.trim();
-
-      if (!name || !whatsapp || !story) {
-
-        alert(
-          "Please fill in your name, WhatsApp number and story."
-        );
-
-        return;
-      }
-
-
-      /*
-       * This is currently a demo submission.
-       * Later we can connect this form to
-       * WhatsApp, Email, Google Sheets or a backend.
-       */
-
-      alert(
-        `Thank you, ${name}! ❤️\n\n` +
-        `We've received the details of your story.\n\n` +
-        `We'll contact you on WhatsApp regarding your storybook.`
-      );
-
-
-      form.reset();
-
-      if (customStoryBox) {
-        customStoryBox.classList.add("hidden");
-      }
-
-      if (customStory) {
-        customStory.required = false;
-      }
-
-      if (photoInput) {
-        const uploadBox =
-          document.querySelector(".upload-box strong");
-
-        if (uploadBox) {
-          uploadBox.textContent = "Choose photos";
-        }
-      }
-
-    });
 
 
 
